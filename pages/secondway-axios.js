@@ -1,6 +1,8 @@
+import axios from 'axios';
 import Head from 'next/head'
 
-function Home({posts}) {
+
+export default function Home({posts, repos}) {
 
   console.log(posts);
   return (
@@ -15,14 +17,32 @@ function Home({posts}) {
           API <a href="https://api.github.com/users/NourheneMbarek/repos"> CALL</a>
         </h1>
 
+        <h1>  1st URL DATA :  https://node-hnapi.herokuapp.com/news?page=1</h1>
+
         <div className="grid">
-          {posts.map((post) => (
+        {posts.map((post) => (
              <a href="#" className="card">
-              <h3>{post.name}  {post.username}</h3>
-              <p>{post.email} - {post.company.catchPhrase}.</p>
+              <h3>User : {post.user}</h3>
+              <p> <strong>title</strong>  : {post.title} - {post.domain}.</p>
+              <p>comment : {post.comments_count}</p>
             </a>
           ))}
         </div>
+
+        <br/>
+        <br/>
+
+        <h1>  2nd URL DATA : https://api.github.com/users/NourheneMbarek/repos </h1>
+        <div className="grid">
+        {repos.map((repo) => (
+             <a href="#" className="card">
+              <h3>Repo : {repo.full_name}</h3>
+              <p> <strong>private</strong>  : {String(repo.private)}</p>
+              <p>Owner : {repo.owner.login}</p>
+            </a>
+          ))}
+        </div>
+        
       </main>
 
       <footer>
@@ -179,19 +199,23 @@ function Home({posts}) {
 
 
 export async function getStaticProps() {
-  // Call an external API endpoint to get posts.
-  // You can use any data fetching library
-  const res = await fetch('https://jsonplaceholder.typicode.com/users')
+  // 1st url
+  const url = "https://node-hnapi.herokuapp.com/news?page=1";
+  const res = await axios.get(url);
+  const posts = await res.data;
+//   console.log(posts);
 
-  const posts = await res.json()
-  console.log(posts);
+
+   //second url 
+  const url2 = "https://api.github.com/users/NourheneMbarek/repos";
+  const res2 = await axios.get(url2);
+  const repos = await res2.data;
+  console.log(repos);
 
   return {
     props: {
       posts,
+      repos
     },
   }
 }
-
-
-export default Home;
